@@ -206,12 +206,12 @@ ste(y,x,2,5)
 a <- 0.5
 b <- 0.6
 g <- 0.8
-x <- rep(0.5, 100)
+x <- rep(0.5, 1000)
 for (i in 1:99) {
   x[i+1] <- a*x[i] + rnorm(n=1, sd=0.5)
 }
-y <- rep(0.6, 100)
-for (i in 1:99) {
+y <- rep(0.6, 1000)
+for (i in 1:999) {
   y[i+1] <- b*y[i] + g*x[i] + rnorm(n=1, sd=0.5)
 }
 # here x is influencing y
@@ -219,10 +219,10 @@ for (i in 1:99) {
 # because we are predicting y into the future using current x,y
 
 ste(y,x,3,2)
-#[1] 1.003224
+#[1] 0.009677885
 
 ste(x,y,3,2)
-#[1] 0.7949662
+#[1] 0.1796151
 
 # and it is... usually.
 
