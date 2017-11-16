@@ -66,28 +66,46 @@ sim <- function(n=50, eps1=1/100) {
 }
 
 # synchronized  
-res0 <- sim(10000, eps1=1/2)
+res0 <- sim(10000, eps1=4)
 plot(x=1:length(res0$x1), y=res0$x1, type='l', xlab='time', ylab='x1', col='blue')
 points(x=1:length(res0$x1), y=res0$x2, type='l', xlab='time', ylab='x1', col="red")
 
 # unsynchronized
 res1 <- sim(10000, eps1=0/2)
-plot(x=1:length(res0$x1), y=res0$x1, type='l', xlab='time', ylab='x1', col='blue')
-points(x=1:length(res0$x1), y=res0$x2, type='l', xlab='time', ylab='x1', col="red")
+plot(x=1:length(res1$x1), y=res1$x1, type='l', xlab='time', ylab='x1', col='blue')
+points(x=1:length(res1$x1), y=res1$x2, type='l', xlab='time', ylab='x1', col="red")
 
-plot(res0$x1, res0$y1, type='l', xlab='x1', ylab='y1')
+plot(res0$x1, res0$x2, type='l', xlab='x1', ylab='y1')
+plot(res1$x1, res1$x2, type='l', xlab='x1', ylab='y1')
+plot(res0$x1, res0$z1, type='l', xlab='x1', ylab='y1')
+plot(res0$x2, res0$z2, type='l', xlab='x1', ylab='y1')
 #plot(res0$z1, res0$z2, type='l', xlab='y1', ylab='y2')
 #plot(res0$z1, res0$z2, type='l', xlab='z1', ylab='z2')
 
 source("symb_ent.R")
 
-ste(res0$x1,res0$x2,4,2)
-#[1] 1.716397
-ste(res0$x2,res0$x1,4,2)
-#[1] -0.02907778
-ste(res1$x1,res1$x2,4,2)
-#[1] -0.5383814
-ste(res1$x2,res1$x1,4,2)
-#[1] 0.2039921
+ste(res0$x1,res0$x2,4,3)
+ste(res0$x2,res0$x1,4,3)
 
+ste(res1$x1,res1$x2,4,2)
+ste(res1$x2,res1$x1,4,2)
+
+
+df <- data.frame()
+for (ci in seq.int(from=0, to=20, by=0.5)) {
+  for (ri in 1:20) {
+    print(paste("coupling: ", ci, "  rep: ", ri))
+    res0 <- sim(5000, eps1=ci)
+    te1 <- ste(res0$x1,res0$x2,3,1)
+    te2 <- ste(res0$x2,res0$x1,3,1)
+    df <- rbind(df, data.frame(Coupling=ci, Rep=ri, TE_x1_to_x2=te1, TE_x2_to_x1=te2))  
+  }  
+}
+
+qplot(x=df$Coupling, y=(df$TE_x2_to_x1 - df$TE_x1_to_x2)) + geom_smooth() + ylab("TE difference") + xlab("Coupling constant")
+
+#[1] 0.1114846  coupled x1 -> x2
+#[1] 3.991081   coupled x2 -> x1
+#[1] -1.221743  uncoupled x1 -> x2
+#[1] -0.2377094 uncoupled x2 -> x1
 
