@@ -52,7 +52,7 @@ sim <- function(n=50, eps1=1/100, eps2=1/100) {
   beta <- 8/3
   mu1 <- -1
   mu2 <- 1
-  kappa <- 1/1
+  kappa <- 1/2
   timestep <- 0.005
   x1 <- c(runif(1))
   y1 <- c(runif(1))
@@ -60,19 +60,35 @@ sim <- function(n=50, eps1=1/100, eps2=1/100) {
   x2 <- c(runif(1))
   y2 <- c(runif(1))
   z2 <- c(runif(1))
-  w  <- c(0.1)
+  w  <- c(runif(1))
   vl <- list(x1=x1,y1=y1,z1=z1,x2=x2,y2=y2,z2=z2,w=w)
   for (tidx in 1:n) {
     vl <- compStep(vl,sigva,rho,beta,kappa,mu1,mu2,eps1,eps2,timestep)
   }
   vl
 }
-  
-res0 <- sim(10000, eps1=1/2, eps2=1/1)
+
+# synchronized  
+res0 <- sim(10000, eps1=1/2, eps2=1/2)
 plot(x=1:length(res0$x1), y=res0$x1, type='l', xlab='time', ylab='x1', col='blue')
 points(x=1:length(res0$x1), y=res0$x2, type='l', xlab='time', ylab='x1', col="red")
 
+# unsynchronized
+res1 <- sim(10000, eps1=0/2, eps2=0/2)
+plot(x=1:length(res0$x1), y=res0$x1, type='l', xlab='time', ylab='x1', col='blue')
+points(x=1:length(res0$x1), y=res0$x2, type='l', xlab='time', ylab='x1', col="red")
 
-#plot(res0$x1, res0$y1, type='l', xlab='x1', ylab='y1')
+plot(res0$x1, res0$y1, type='l', xlab='x1', ylab='y1')
 #plot(res0$z1, res0$z2, type='l', xlab='y1', ylab='y2')
 #plot(res0$z1, res0$z2, type='l', xlab='z1', ylab='z2')
+
+source("symb_ent.R")
+
+ste(res0$x1,res0$x2,2,2)
+#[1] 1.716397
+ste(res0$x2,res0$x1,2,2)
+#[1] -0.02907778
+ste(res1$x1,res1$x2,2,2)
+#[1] -0.5383814
+ste(res1$x2,res1$x1,2,2)
+#[1] 0.2039921
